@@ -105,15 +105,15 @@ func main() {
 	cid, err := sh.Add(strings.NewReader(string(html)))
 	HandleErr(err)
 
-	node, err := sh.Resolve("")
-	HandleErr(err)
-
-	err = sh.Publish(node, cid)
-	HandleErr(err)
-
 	fmt.Println("GATEWAYS\n============================")
 
 	for _, gateway := range gateways {
 		fmt.Printf("%s%s#%s\n", gateway, cid, key)
 	}
+
+	node, err := sh.Resolve("")
+	HandleErr(err)
+
+	err = sh.Publish(node, cid)
+	HandleErr(err)
 }
