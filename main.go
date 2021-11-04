@@ -59,8 +59,12 @@ func stdinRead() {
 }
 
 func waitGateway(url string) {
+	client := http.Client{
+		Timeout: 8 * time.Second,
+	}
+
 	for {
-		resp, err := http.Get(url)
+		resp, err := client.Get(url)
 		if err == nil {
 			if resp.StatusCode == 200 {
 				fmt.Fprint(os.Stdout, "\r \r")
