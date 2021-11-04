@@ -1,9 +1,9 @@
 package main
 
 import (
+	"io/ioutil"
 	"os"
 	"strings"
-	"io/ioutil"
 
 	"github.com/gabriel-vasile/mimetype"
 )
@@ -22,7 +22,7 @@ func DecrypterFromFile(fname string, b64 string) []byte {
 
 	html = strings.Replace(html, "{{DATA}}", b64, 1)
 	html = strings.Replace(html, "{{BINARY}}", "true", 1)
-	
+
 	mtype, err := mimetype.DetectFile(fname)
 	HandleErr(err)
 

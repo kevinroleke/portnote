@@ -1,24 +1,24 @@
 package main
 
 import (
-	"os"
-	"fmt"
-	"flag"
-	"time"
-	"net"
-	"log"
-	"bytes"
 	"bufio"
-	"net/http"
-	"strings"
+	"bytes"
+	"flag"
+	"fmt"
 	"io/ioutil"
+	"log"
+	"net"
+	"net/http"
+	"os"
+	"strings"
+	"time"
 
 	shell "github.com/ipfs/go-ipfs-api"
 )
 
 var (
-	sh *shell.Shell
-	data []byte
+	sh      *shell.Shell
+	data    []byte
 	gateway string = "https://gateway.ipfs.io/ipfs/"
 )
 
@@ -44,18 +44,18 @@ func getDaemon(daemon string) *shell.Shell {
 func stdinRead() {
 	scanner := bufio.NewScanner(os.Stdin)
 
-    for scanner.Scan() {
-        b := scanner.Bytes()
+	for scanner.Scan() {
+		b := scanner.Bytes()
 		if bytes.Compare(b, []byte("EOF")) == 0 {
 			return
 		} else {
 			data = append(data, b[:]...)
 			data = append(data, []byte("\n")[:]...)
 		}
-    }
-    if err := scanner.Err(); err != nil {
-        HandleErr(err)
-    }
+	}
+	if err := scanner.Err(); err != nil {
+		HandleErr(err)
+	}
 }
 
 func waitGateway(url string) {
