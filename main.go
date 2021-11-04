@@ -9,6 +9,7 @@ import (
 	"log"
 	"bytes"
 	"bufio"
+	"net/http"
 	"strings"
 	"io/ioutil"
 
@@ -18,11 +19,7 @@ import (
 var (
 	sh *shell.Shell
 	data []byte
-	gateways = []string{
-		"http://localhost:8080/ipfs/",
-		"https://gateway.ipfs.io/ipfs/",
-		"https://cloudflare-ipfs.com/ipfs/",
-	}
+	gateway string = "https://gateway.ipfs.io/ipfs/"
 )
 
 func HandleErr(err error) {
@@ -59,6 +56,24 @@ func stdinRead() {
     if err := scanner.Err(); err != nil {
         HandleErr(err)
     }
+}
+
+func waitGateway(url string) {
+	for {
+		resp, err := http.Get(url)
+		if err == nil {
+			if resp.StatusCode == 200 {
+				fmt.Fprint(os.Stdout, "\r \r")
+				fmt.Println(url)
+				return
+			}
+		}
+
+		for _, r := range `-\|/` {
+			fmt.Printf("\r%c", r)
+			time.Sleep(500 * time.Millisecond)
+		}
+	}
 }
 
 func main() {
@@ -105,15 +120,7 @@ func main() {
 	cid, err := sh.Add(strings.NewReader(string(html)))
 	HandleErr(err)
 
-	fmt.Println("GATEWAYS\n============================")
+	fmt.Printf("Successfully added %s. Now waiting for it to reach the gateway. Ensure your IPFS node is connected to the Swarm.\n", cid)
 
-	for _, gateway := range gateways {
-		fmt.Printf("%s%s#%s\n", gateway, cid, key)
-	}
-
-	node, err := sh.Resolve("")
-	HandleErr(err)
-
-	err = sh.Publish(node, cid)
-	HandleErr(err)
+	waitGateway(gateway + cid + "#" + key)
 }
